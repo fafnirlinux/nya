@@ -251,27 +251,6 @@ bool Package::create_script() {
 		return false;
 	}
 
-	/*vector<string> prebuild = sect("prebuild");
-
-    if (!prebuild.empty()) {
-    	if (sources.size() == 1) {
-  			line("cd " + strip_extension(sources.begin()->second));
-  		}
-
-    	for (auto line: placeholders_sect(prebuild)) {
-        	line(line);
-    	}
-    }
-
-	if (lines.empty()) {
-		string source(get_build_path() + "/" + strip_extension(sources.begin()->second));
-
-		if (file_exists(source + "/configure")) {
-			lines.push_back("%conf");
-			lines.push_back("%mk");
-		}
-	}*/
-
 	rmfile(get_build_path() + "/build.sh");
 	ofstream script(get_build_path() + "/build.sh");
 
@@ -294,23 +273,11 @@ bool Package::create_script() {
 	    }
     }
 
-    //line("init_flags");
+    line("init_flags");
 
     for (auto line: placeholders_sect(lines)) {
         line(line);
     }
-
-    /*line("cd " + dest);
-
-    vector<string> postbuild = sect("postbuild");
-
-    if (!postbuild.empty()) {
-    	for (auto line: placeholders_sect(postbuild)) {
-        	line(line);
-    	}
-    }*/
-
-    //line("cleanup");
 
   	script.close();
 
