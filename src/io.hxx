@@ -59,6 +59,7 @@ string get_built();
 string get_stuff();
 string get_rootfs();
 string get_db();
+string get_cwd();
 bool is_archive(string filename);
 vector<string> get_contents(string path);
 void create_archive(string archivename, string dest, vector<string> files);

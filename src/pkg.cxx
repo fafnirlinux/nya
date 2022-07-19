@@ -175,7 +175,7 @@ bool Package::extract_archives() {
 
 string Package::placeholders_var(string line) {
 	for (itr = get_config_data().begin(); itr != get_config_data().end(); ++itr) {
-		replace("%" + itr->first, itr->second);
+		replace("%" + itr->first, regex_replace(itr->second, regex("%pwd"), get_cwd()));
 	}
 
   	replace("%name", name);

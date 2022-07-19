@@ -67,9 +67,6 @@ Package* get_pkg(string name) {
 	return NULL;
 }
 
-#define conf(x) regex_replace(read_variable(config, x), regex("%pwd"), cwd)
-#define add_ext(x) archive_extensions.push_back(x)
-
 string erase(string mainStr, string toErase) {
     string str = mainStr;
     size_t pos = string::npos;
@@ -78,6 +75,9 @@ string erase(string mainStr, string toErase) {
     }
     return str;
 }
+
+#define conf(x) regex_replace(get_val(x), regex("%pwd"), cwd)
+#define add_ext(x) archive_extensions.push_back(x)
 
 bool init(string cfg){
 	char cwdd[50];
@@ -109,16 +109,16 @@ bool init(string cfg){
 
    	config_data = read_variables(config);
 
-   	if (!get_val("rootfs").empty()) rootfs = get_val("rootfs"); else rootfs = "/";
+   	if (!conf("rootfs").empty()) rootfs = conf("rootfs"); else rootfs = "/";
 
-	if (!get_val("src").empty()) src = get_val("src"); else src = rootfs + "/src";
+	if (!conf("src").empty()) src = conf("src"); else src = rootfs + "/src";
 
-	if (!get_val("db").empty()) db = get_val("db"); else db = src + "/db";
-	if (!get_val("build_dir").empty()) build = get_val("build_dir"); else build = src + "/build";
-	if (!get_val("dl_dir").empty()) dl = get_val("dl_dir"); else dl = src + "/dl";
-	if (!get_val("built_dir").empty()) built = get_val("built_dir"); else built = src + "/built";
-	if (!get_val("pkgdir").empty()) pkgdir = get_val("pkgdir"); else pkgdir = src + "/pkg";
-	if (!get_val("stuff_dir").empty()) stuff = get_val("stuff_dir"); else stuff = src + "/stuff";
+	if (!conf("db").empty()) db = conf("db"); else db = src + "/db";
+	if (!conf("build_dir").empty()) build = conf("build_dir"); else build = src + "/build";
+	if (!conf("dl_dir").empty()) dl = conf("dl_dir"); else dl = src + "/dl";
+	if (!conf("built_dir").empty()) built = conf("built_dir"); else built = src + "/built";
+	if (!conf("pkgdir").empty()) pkgdir = conf("pkgdir"); else pkgdir = src + "/pkg";
+	if (!conf("stuff_dir").empty()) stuff = conf("stuff_dir"); else stuff = src + "/stuff";
 
 	makedir(rootfs);
 	makedir(src);
@@ -541,6 +541,10 @@ bool is_no(string var) {
 
 map<string, string> get_config_data() {
 	return config_data;
+}
+
+string get_cwd() {
+	return cwd;
 }
 
 bool package_exists(string name){
