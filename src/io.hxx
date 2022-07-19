@@ -33,7 +33,7 @@ namespace fs = filesystem;
 #define changedir(x) chdir(x.c_str())
 #define perms(x) fs::permissions(x, fs::perms::owner_all | fs::perms::group_all, fs::perm_options::add);
 
-bool init();
+bool init(string cfg);
 void mvfile(string file, string to);
 void rmfile(string file);
 bool is_added(string name);
@@ -45,6 +45,10 @@ string get_pkg_file(string name);
 string read_variable(vector<string> data, string variable);
 map<string, string> read_variables(vector<string> data);
 string get_value(map<string, string> data, string var);
+string get_val(string var);
+bool is_yes(string var);
+bool is_no(string var);
+map<string, string> get_config_data();
 bool package_exists(string name);
 string erase(string mainStr, string toErase);
 string get_dl();

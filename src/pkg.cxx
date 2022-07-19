@@ -174,6 +174,10 @@ bool Package::extract_archives() {
 #define replace(x, y) line = regex_replace(line, regex(x), y)
 
 string Package::placeholders_var(string line) {
+	for (itr = get_config_data().begin(); itr != get_config_data().end(); ++itr) {
+		replace("%" + itr->first, itr->second);
+	}
+
   	replace("%name", name);
 
   	for (itr = variables.begin(); itr != variables.end(); ++itr) {
@@ -340,7 +344,7 @@ bool Package::package() {
 
 		install_script << "#!/bin/sh" << endl;
 
-		for(auto line: placeholders_sect(install)){
+		for (auto line: placeholders_sect(install)) {
 			install_script << line << endl;
 		}
 
@@ -354,7 +358,7 @@ bool Package::package() {
 
 		uninstall_script << "#!/bin/sh" << endl;
 
-		for(auto line: placeholders_sect(uninstall)){
+		for (auto line: placeholders_sect(uninstall)) {
 			uninstall_script << line << endl;
 		}
 
@@ -367,7 +371,9 @@ bool Package::package() {
 }
 
 bool Package::build(bool silent) {
-    if (file_exists(get_built() + "/" + name + ".cpio.gz")) {
+	bool do_package = !is_yes("no-package") && !sources.empty();
+
+    if (do_package && file_exists(get_built() + "/" + name + ".cpio.gz")) {
 		err("already built");
 	}
 
@@ -382,7 +388,7 @@ bool Package::build(bool silent) {
 	if (!get_sources()) { err("couldn't get sources"); }
 	if (!extract_archives()) { err("couldn't extract archives"); }
 
-	if (!sources.empty()) {
+	if (do_package) {
 		dest = get_build_path() + "/" + name + "-dest";
   		makedir(dest);
   	}
@@ -396,9 +402,7 @@ bool Package::build(bool silent) {
         system("bash build.sh");
     maindir();
 
-	if (!sources.empty()) {
-		if (!package()) return false;
-    }
+	if (do_package && !package()) return false;
 
 	return true;
 }

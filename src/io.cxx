@@ -1,6 +1,6 @@
 #include "io.hxx"
 
-string cwd, config, rootfs, db;
+string cwd, rootfs, db;
 
 string src, build, dl, built;
 string pkgdir, stuff;
@@ -11,9 +11,9 @@ CURLcode res;
 map<string, Package> pool;
 map<string, Package>::iterator itr;
 
-vector<string> archive_extensions;
+vector<string> config, archive_extensions;
 
-map<string, string> placeholders;
+map<string, string> config_data, placeholders;
 map<string, string>::iterator _itr;
 
 bool add_placeholder(string placeholder, string value) {
@@ -67,7 +67,7 @@ Package* get_pkg(string name) {
 	return NULL;
 }
 
-#define conf(x) regex_replace(read_variable(config_data, x), regex("%pwd"), cwd)
+#define conf(x) regex_replace(read_variable(config, x), regex("%pwd"), cwd)
 #define add_ext(x) archive_extensions.push_back(x)
 
 string erase(string mainStr, string toErase) {
@@ -79,7 +79,7 @@ string erase(string mainStr, string toErase) {
     return str;
 }
 
-bool init(){
+bool init(string cfg){
 	char cwdd[50];
 
 	if (getcwd(cwdd, sizeof(cwdd)) == NULL) {
@@ -89,6 +89,8 @@ bool init(){
 
 	cwd = string(cwdd);
 
+	if (cfg.empty()) cfg = cwd + "/config";
+
 	curl_global_init(CURL_GLOBAL_ALL);
 
 	curl = curl_easy_init();
@@ -97,43 +99,38 @@ bool init(){
 
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 
-    vector<string> config_data;
-
     if (file_exists("/etc/nya.conf")) {
-    	config = "/etc/nya.conf";
-    	config_data = read_file(config, true);
-    } else if (file_exists(cwd + "/config")) {
-    	config = cwd + "/config";
-    	config_data = read_file(config, true);
+    	config = read_file("/etc/nya.conf", true);
+    } else if (file_exists(cfg)) {
+    	config = read_file(cfg, true);
     	rootfs = conf("rootfs");
     	makedir(rootfs);
     } else {
     	return false;
    	}
 
-	src = conf("src");
-	if (src.empty())
-		src = rootfs + "/src";
+   	config_data = read_variables(config);
+
+	if (!get_val("src").empty()) get_val("src"); else src = rootfs + "/src";
+
+	if (!get_val("db").empty()) get_val("db"); else db = src + "/db";
+	if (!get_val("build_dir").empty()) get_val("build_dir"); else build = src + "/build";
+	if (!get_val("dl_dir").empty()) get_val("dl_dir"); else dl = src + "/dl";
+	if (!get_val("built_dir").empty()) get_val("built_dir"); else built = src + "/built";
+	if (!get_val("pkgdir").empty()) get_val("pkgdir"); else pkgdir = src + "/pkg";
+	if (!get_val("stuff_dir").empty()) get_val("stuff_dir"); else stuff = src + "/stuff";
+
 	makedir(src);
-
-	db = conf("db");
-	if (db.empty())
-		db = src + "/db";
-	makedir(db);
-
-	build = src + "/build";
-	dl = src + "/dl";
-	built = src + "/built";
-
-	pkgdir = src + "/pkg";
-	stuff = src + "/stuff";
 
 	makedir(build);
 	makedir(dl);
-	makedir(built);
-
 	makedir(pkgdir);
 	makedir(stuff);
+
+	if (!is_yes("no-package")) {
+		makedir(db);
+		makedir(built);
+	}
 
 	add_ext("tar.gz");
 	add_ext("tar.xz");
@@ -527,6 +524,22 @@ string get_value(map<string, string> data, string var) {
 	}
 
 	return "";
+}
+
+string get_val(string var) {
+	return get_value(config_data, var);
+}
+
+bool is_yes(string var) {
+	return get_val(var) == "yes";
+}
+
+bool is_no(string var) {
+	return get_val(var) == "no";
+}
+
+map<string, string> get_config_data() {
+	return config_data;
 }
 
 bool package_exists(string name){

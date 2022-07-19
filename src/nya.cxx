@@ -22,8 +22,9 @@ vector<string> marked;
 
 void dependency(string pkgname) {
 	Package* pkg = get_pkg(pkgname);
-	pkg->read(get_pkg_file(pkgname));
 	if(pkg == NULL) return;
+	pkg->read(get_pkg_file(pkgname));
+
 	vector<string> deps = pkg->get_depends();
 
 	for (auto dep: deps) {
@@ -37,46 +38,94 @@ void dependency(string pkgname) {
 		dependencies.push_back(pkgname);
 }
 
-int main(int argc, char *argv[]) {
-	if (argc < 2 || !argv[1] || !argv[2]) {
-		usage(argv[0]);
-		return 1;
-	}
-
-	if (!init())
-		return 1;
-
-	string action(argv[1]);
-	string pkgname(argv[2]);
-
-	if (strpos(action, "emerge")) {
+void emerge(vector<string> pkgs) {
+	for (auto pkgname: pkgs) {
 		dependency(pkgname);
 
-		for(auto dep: dependencies){
+		bool error;
+
+		for (auto dep: dependencies) {
 			Package* pkg = get_pkg(dep);
+
 			if (pkg->build(false)) {
-                if (!pkg->install()) {
-                    break;
-                }
+            	if (!pkg->install()) {
+            		error = true;
+                	break;
+            	}
+			} else {
+				error = true;
+				break;
+			}
+		}
+
+		if (error) break;
+	}
+}
+
+void build(vector<string> pkgs) {
+	for (auto pkgname: pkgs) {
+		dependency(pkgname);
+
+		bool error;
+
+		for (auto dep: dependencies) {
+			Package* pkg = get_pkg(dep);
+
+			if (!pkg->build(false)) {
+            	error = true;
+                break;
             }
 		}
-	} else if (strpos(action, "build")) {
-		dependency(pkgname);
 
-		for(auto dep: dependencies){
-			Package* pkg = get_pkg(dep);
-			pkg->build(false);
+		if (error) break;
+	}
+}
+
+int main(int argc, char *argv[]) {
+	--argc;
+	if (argc < 1) { usage(argv[0]); return 1; }
+	vector<string> args(argv + 1, argv + (argc + 1));
+	string action;
+	vector<string> others;
+	for (auto str: args) {
+		if (action.empty()) { action = str; continue; }
+		others.push_back(str);
+	}
+	if (others.empty()) { usage(argv[0]); return 1; }
+	string config;
+	vector<string> pkgs;
+	int i;
+	for (auto str: others) {
+		if (str == "--config") {
+			if (i+1 < others.size())
+				config = others[i+1];
+		} else if (str != config) {
+			pkgs.push_back(str);
 		}
-	} else if (strpos(action, "install")) {
-		Package* pkg = get_pkg(pkgname);
-		pkg->install();
-	} else if (strpos(action, "remove")) {
-		Package* pkg = get_pkg(pkgname);
-		pkg->remove();
+		++i;
+	}
+
+	if (!init(config))
+		return 1;
+
+	if (action == "emerge") {
+		emerge(pkgs);
+	} else if (action == "build") {
+		build(pkgs);
+	} else if (action == "install") {
+		for (auto pkg: pkgs) {
+			if (!get_pkg(pkg)->install()) break;
+		}
+	} else if (action == "remove") {
+		for (auto pkg: pkgs) {
+			if (!get_pkg(pkg)->remove()) break;
+		}
 	} else {
 		print("invalid action");
 		return 1;
 	}
+
 	curl_global_cleanup();
+
 	return 0;
 }
