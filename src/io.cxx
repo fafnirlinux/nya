@@ -101,10 +101,10 @@ bool init(){
 
     if (file_exists("/etc/nya.conf")) {
     	config = "/etc/nya.conf";
-    	config_data = read_file(config);
+    	config_data = read_file(config, true);
     } else if (file_exists(cwd + "/config")) {
     	config = cwd + "/config";
-    	config_data = read_file(config);
+    	config_data = read_file(config, true);
     	rootfs = conf("rootfs");
     	makedir(rootfs);
     } else {
