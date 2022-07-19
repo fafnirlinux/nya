@@ -109,7 +109,7 @@ bool init(string cfg){
 
    	config_data = read_variables(config);
 
-   	map<string, string> data;
+   /*map<string, string> data;
 
 	for (_itr = config_data.begin(); _itr != config_data.end(); ++_itr) {
 		string var = _itr->first;
@@ -124,7 +124,7 @@ bool init(string cfg){
 		data.insert({var, val});
 	}
 
-	config_data = data;
+	config_data = data;*/
 
    	if (!conf("rootfs").empty()) rootfs = conf("rootfs"); else rootfs = "/";
 
@@ -511,6 +511,8 @@ string read_variable(vector<string> data, string variable) {
 	if (variable.empty()) return "";
 
 	for (auto var: data) {
+		if (var.empty()) continue;
+
 		if (strpos(var, variable + "=")) {
 			return erase(var, variable + "=");
 		}
@@ -538,7 +540,8 @@ map<string, string> read_variables(vector<string> data) {
 
 string get_value(map<string, string> data, string var) {
 	for (_itr = data.begin(); _itr != data.end(); ++_itr) {
-		return _itr->second;
+		if (var == _itr->first)
+			return _itr->second;
 	}
 
 	return "";

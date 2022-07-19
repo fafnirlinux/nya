@@ -174,9 +174,9 @@ bool Package::extract_archives() {
 #define replace(x, y) line = regex_replace(line, regex(x), y)
 
 string Package::placeholders_var(string line) {
-	for (itr = get_config_data().begin(); itr != get_config_data().end(); ++itr) {
+	/*for (itr = get_config_data().begin(); itr != get_config_data().end(); ++itr) {
 		replace("%" + itr->first, itr->second);
-	}
+	}*/
 
   	replace("%name", name);
 
