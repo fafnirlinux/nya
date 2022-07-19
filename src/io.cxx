@@ -99,27 +99,28 @@ bool init(string cfg){
 
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 
-    if (file_exists("/etc/nya.conf")) {
-    	config = read_file("/etc/nya.conf", true);
+    if (file_exists(DEFAULT_CONFIG)) {
+    	config = read_file(DEFAULT_CONFIG, true);
     } else if (file_exists(cfg)) {
     	config = read_file(cfg, true);
-    	rootfs = conf("rootfs");
-    	makedir(rootfs);
     } else {
     	return false;
    	}
 
    	config_data = read_variables(config);
 
-	if (!get_val("src").empty()) get_val("src"); else src = rootfs + "/src";
+   	if (!get_val("rootfs").empty()) rootfs = get_val("rootfs"); else rootfs = "/";
 
-	if (!get_val("db").empty()) get_val("db"); else db = src + "/db";
-	if (!get_val("build_dir").empty()) get_val("build_dir"); else build = src + "/build";
-	if (!get_val("dl_dir").empty()) get_val("dl_dir"); else dl = src + "/dl";
-	if (!get_val("built_dir").empty()) get_val("built_dir"); else built = src + "/built";
-	if (!get_val("pkgdir").empty()) get_val("pkgdir"); else pkgdir = src + "/pkg";
-	if (!get_val("stuff_dir").empty()) get_val("stuff_dir"); else stuff = src + "/stuff";
+	if (!get_val("src").empty()) src = get_val("src"); else src = rootfs + "/src";
 
+	if (!get_val("db").empty()) db = get_val("db"); else db = src + "/db";
+	if (!get_val("build_dir").empty()) build = get_val("build_dir"); else build = src + "/build";
+	if (!get_val("dl_dir").empty()) dl = get_val("dl_dir"); else dl = src + "/dl";
+	if (!get_val("built_dir").empty()) built = get_val("built_dir"); else built = src + "/built";
+	if (!get_val("pkgdir").empty()) pkgdir = get_val("pkgdir"); else pkgdir = src + "/pkg";
+	if (!get_val("stuff_dir").empty()) stuff = get_val("stuff_dir"); else stuff = src + "/stuff";
+
+	makedir(rootfs);
 	makedir(src);
 
 	makedir(build);

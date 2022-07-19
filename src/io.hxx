@@ -26,6 +26,8 @@ using namespace std;
 
 namespace fs = filesystem;
 
+#define DEFAULT_CONFIG "/etc/nya.conf"
+
 #define print(x) cout << x << endl;
 #define strpos(x, y) x.find(y) != string::npos
 
