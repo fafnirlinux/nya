@@ -109,23 +109,6 @@ bool init(string cfg){
 
    	config_data = read_variables(config);
 
-   /*map<string, string> data;
-
-	for (_itr = config_data.begin(); _itr != config_data.end(); ++_itr) {
-		string var = _itr->first;
-		string val = _itr->second;
-
-		for (_itr = config_data.begin(); _itr != config_data.end(); ++_itr) {
-			val = regex_replace(val, regex("%" + _itr->first), _itr->second);
-		}
-
-		val = regex_replace(val, regex("%pwd"), get_cwd());
-
-		data.insert({var, val});
-	}
-
-	config_data = data;*/
-
    	if (!conf("rootfs").empty()) rootfs = conf("rootfs"); else rootfs = "/";
 
 	if (!conf("src").empty()) src = conf("src"); else src = rootfs + "/src";

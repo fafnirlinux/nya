@@ -174,10 +174,6 @@ bool Package::extract_archives() {
 #define replace(x, y) line = regex_replace(line, regex(x), y)
 
 string Package::placeholders_var(string line) {
-	/*for (itr = get_config_data().begin(); itr != get_config_data().end(); ++itr) {
-		replace("%" + itr->first, itr->second);
-	}*/
-
   	replace("%name", name);
 
   	for (itr = variables.begin(); itr != variables.end(); ++itr) {
@@ -382,7 +378,9 @@ bool Package::build(bool silent) {
         return false;
 	}
 
-	rmfile(get_build_path());
+	if (file_exists(get_build_path()))
+		system(string("rm -rf " + get_build_path()).c_str());
+
 	makedir(get_build_path());
 
 	if (!get_sources()) { err("couldn't get sources"); }
@@ -391,6 +389,8 @@ bool Package::build(bool silent) {
 	if (do_package) {
 		dest = get_build_path() + "/" + name + "-dest";
   		makedir(dest);
+  	} else {
+  		dest = get_rootfs();
   	}
 
 	if (!create_script()) { err("no build section"); }
