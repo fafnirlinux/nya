@@ -39,6 +39,20 @@ void dependency(string pkgname) {
 }
 
 void emerge(vector<string> pkgs) {
+	if (is_yes("no-deps")) {
+		for (auto pkgname: pkgs) {
+			Package* pkg = get_pkg(pkgname);
+
+			if (pkg->build(false)) {
+            	if (!pkg->install()) {
+                	break;
+            	}
+            }
+		}
+
+		return;
+	}
+
 	for (auto pkgname: pkgs) {
 		dependency(pkgname);
 
@@ -63,6 +77,18 @@ void emerge(vector<string> pkgs) {
 }
 
 void build(vector<string> pkgs) {
+	if (is_yes("no-deps")) {
+		for (auto pkgname: pkgs) {
+			Package* pkg = get_pkg(pkgname);
+
+			if (!pkg->build(false)) {
+                break;
+            }
+		}
+
+		return;
+	}
+
 	for (auto pkgname: pkgs) {
 		dependency(pkgname);
 

@@ -135,7 +135,7 @@ bool Package::get_sources() {
 			    fclose(file);
 		    }
 
-		    if (!exists || file_size(target) == 0) {
+		    if (file_size(target) == 0) {
 			    err("couldn't get " + filename);
                 rmfile(target);
 		    }
