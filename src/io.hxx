@@ -24,7 +24,9 @@
 
 using namespace std;
 
-namespace fs = filesystem;
+using namespace filesystem;
+
+//namespace fs = filesystem;
 
 #define DEFAULT_CONFIG "/etc/nya.conf"
 
@@ -33,7 +35,7 @@ namespace fs = filesystem;
 
 #define makedir(x) mkdir(x.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH)
 #define changedir(x) chdir(x.c_str())
-#define perms(x) fs::permissions(x, fs::perms::owner_all | fs::perms::group_all, fs::perm_options::add);
+#define perms(x) permissions(x, perms::owner_all | perms::group_all, perm_options::add);
 
 bool init(string cfg);
 void mvfile(string file, string to);
@@ -42,7 +44,8 @@ bool is_added(string name);
 void add_package(string name);
 vector<string> read_section(vector<string> data, string section, bool checks = true);
 vector<string> read_file(string filename, bool checks = false);
-bool file_exists(const string& name);
+bool file_exists(string path);
+bool dir_exists(string path);
 string get_pkg_file(string name);
 string read_variable(vector<string> data, string variable);
 map<string, string> read_variables(vector<string> data);

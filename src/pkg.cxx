@@ -98,19 +98,23 @@ bool Package::get_sources() {
         string source = itr->first;
         string filename, target;
 
+        bool exists;
+
         bool git = !is_archive(source) && strpos(source, "git");
 
         if (!git) {
             filename = basename(source.c_str());
             target = get_dl_path() + "/" + filename;
+            exists = file_exists(target);
         } else {
             filename = itr->second;
             target = get_build_path() + "/" + filename;
+            exists = dir_exists(target);
         }
 
         snprintf(buff, sizeof(buff), " [%i/%i]", i, all);
 
-		if (file_exists(target)) {
+		if (exists) {
             msg(filename + " already exists" + string(buff));
 			continue;
         }
@@ -131,7 +135,7 @@ bool Package::get_sources() {
 			    fclose(file);
 		    }
 
-		    if (fs::file_size(target) == 0) {
+		    if (!exists || file_size(target) == 0) {
 			    err("couldn't get " + filename);
                 rmfile(target);
 		    }
@@ -140,7 +144,7 @@ bool Package::get_sources() {
             system(string("git clone " + source + " &>/dev/null").c_str());
             maindir();
 
-            if (!file_exists(target)) {
+            if (!exists) {
                 err("couldn't clone " + filename);
             }
         }
@@ -163,7 +167,7 @@ bool Package::extract_archives() {
 	}
 
 	for (itr = archives.begin(); itr != archives.end(); ++itr) {
-		if (!file_exists(get_build_path() + "/" + itr->second)) {
+		if (!dir_exists(get_build_path() + "/" + itr->second)) {
 			err("failed to extract " + itr->first);
 		}
 	}
@@ -378,7 +382,7 @@ bool Package::build(bool silent) {
         return false;
 	}
 
-	if (file_exists(get_build_path()))
+	if (dir_exists(get_build_path()))
 		system(string("rm -rf " + get_build_path()).c_str());
 
 	makedir(get_build_path());
@@ -408,7 +412,7 @@ bool Package::build(bool silent) {
 }
 
 bool Package::install() {
-	if (file_exists(get_db_path())) {
+	if (file_exists(get_db_path() + "/pkgdata")) {
 		err("already installed");
 	}
 
@@ -442,8 +446,8 @@ bool Package::install() {
 }
 
 bool Package::remove() {
-	if (!file_exists(get_db_path())) {
-		err("not installed");
+	if (!file_exists(get_db_path() + "/pkgdata")) {
+		err("already installed");
 	}
 
 	if (!read(get_db_path() + "/pkgdata")) {

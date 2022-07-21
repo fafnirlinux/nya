@@ -185,11 +185,11 @@ CURL *get_curl() {
 }
 
 void mvfile(string file, string to) {
-	if (file_exists(file)) fs::rename(file, to);
+	if (file_exists(file)) rename(file, to);
 }
 
 void rmfile(string file) {
-	if (file_exists(file)) fs::remove(file);
+	if (file_exists(file)) remove(file);
 }
 
 bool is_added(string name) {
@@ -258,7 +258,7 @@ vector<string> get_contents(string path) {
 	vector<string> list;
 
     if (file_exists(path)) {
-	    for (const auto &file: fs::recursive_directory_iterator(path))
+	    for (const auto &file: recursive_directory_iterator(path))
 		    list.push_back(file.path());
     }
 
@@ -462,9 +462,12 @@ string apply_placeholders(string line) {
 	return result;
 }
 
-bool file_exists(const string& name) {
-	struct stat buffer;
-	return !stat(name.c_str(), &buffer);
+bool file_exists(string path) {
+	return is_regular_file(status(path));
+}
+
+bool dir_exists(string path) {
+	return is_directory(status(path));
 }
 
 string get_pkg_file(string name) {
@@ -476,6 +479,7 @@ string get_pkg_file(string name) {
 
     while (entry != NULL) {
         if (entry->d_type == DT_DIR) {
+        	if (strpos(string(entry->d_name), "stuff")) continue;
             if (file_exists(pkgdir + "/" + string(entry->d_name) + "/" + name)) {
                 pkgfile = pkgdir + "/" + string(entry->d_name) + "/" + name;
                 break;
@@ -509,6 +513,7 @@ map<string, string> read_variables(vector<string> data) {
 
 	for (auto line: data) {
 		if (line.empty()) continue;
+		if (line.at(0) == '#') continue;
 		if (line.at(0) == '[' && line.at(line.size()-1) == ']') break;
 		if (strpos(line, "=")) {
 			string val = line.substr(line.find("=") + 1);
