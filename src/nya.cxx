@@ -112,6 +112,7 @@ void build(vector<string> pkgs) {
 }
 
 int main(int argc, char *argv[]) {
+	if (getuid()) { print("run as root"); return 1; }
 	--argc;
 	if (argc < 1) { usage(argv[0]); return 1; }
 	vector<string> args(argv + 1, argv + (argc + 1));
