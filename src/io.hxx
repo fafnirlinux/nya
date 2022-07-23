@@ -23,10 +23,7 @@
 #include "pkg.hxx"
 
 using namespace std;
-
 using namespace filesystem;
-
-//namespace fs = filesystem;
 
 #define DEFAULT_CONFIG "/etc/nya.conf"
 

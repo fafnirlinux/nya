@@ -137,13 +137,14 @@ bool init(string cfg){
 	add_ext("tar.xz");
     add_ext("tar.bz2");
 
-	string cpu_count = to_string(sysconf(_SC_NPROCESSORS_ONLN));
+	string threads;
+	if (!conf("make_threads").empty()) threads = conf("make_threads"); else threads = to_string(sysconf(_SC_NPROCESSORS_ONLN));
 
 	string prefix;
 
 	add_placeholder("%rootfs", rootfs);
 	add_placeholder("%prefix", prefix);
-	add_placeholder("%threads", cpu_count);
+	add_placeholder("%threads", threads);
     add_placeholder("%arch", "x86_64");
 
 	add_placeholder("%conf", "./configure --prefix=" + prefix);

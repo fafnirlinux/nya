@@ -135,7 +135,7 @@ bool Package::get_sources() {
 			    fclose(file);
 		    }
 
-		    if (file_size(target) == 0) {
+		    if (!file_exists(target) || file_size(target) == 0) {
 			    err("couldn't get " + filename);
                 rmfile(target);
 		    }
@@ -144,7 +144,7 @@ bool Package::get_sources() {
             system(string("git clone " + source + " &>/dev/null").c_str());
             maindir();
 
-            if (!exists) {
+            if (!dir_exists(target)) {
                 err("couldn't clone " + filename);
             }
         }
