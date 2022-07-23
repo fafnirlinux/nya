@@ -274,6 +274,7 @@ bool Package::create_script() {
   	}
 
     if (archives.size() == 1) {
+
         vector<string> list = get_contents(get_files_path() + "/patches");
 
 	    for (auto patch: list) {

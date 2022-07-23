@@ -258,7 +258,7 @@ bool is_archive(string filename) {
 vector<string> get_contents(string path) {
 	vector<string> list;
 
-    if (file_exists(path)) {
+    if (dir_exists(path)) {
 	    for (const auto &file: recursive_directory_iterator(path))
 		    list.push_back(file.path());
     }
