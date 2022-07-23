@@ -43,7 +43,7 @@ void emerge(vector<string> pkgs) {
 		for (auto pkgname: pkgs) {
 			Package* pkg = get_pkg(pkgname);
 
-			if (pkg->build(false)) {
+			if (pkg->build()) {
             	if (!pkg->install()) {
                 	break;
             	}
@@ -61,7 +61,7 @@ void emerge(vector<string> pkgs) {
 		for (auto dep: dependencies) {
 			Package* pkg = get_pkg(dep);
 
-			if (pkg->build(false)) {
+			if (pkg->build()) {
             	if (!pkg->install()) {
             		error = true;
                 	break;

@@ -71,7 +71,7 @@ vector<string> Package::get_depends() {
 	return result;
 }
 
-bool Package::get_sources() {
+bool Package::get_sources(bool silent) {
     for (auto src: sect("srcs")) {
         src = placeholders_var(src);
 
@@ -131,7 +131,12 @@ bool Package::get_sources() {
 		    FILE *file = fopen(target.c_str(), "w");
 		    if (file) {
 			    curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
+
+			    if (!silent || !is_yes("silent"))
+			    	curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
+
 			    curl_easy_perform(curl);
+
 			    fclose(file);
 		    }
 
@@ -141,7 +146,10 @@ bool Package::get_sources() {
 		    }
         } else {
             changedir(get_build_path());
-            system(string("git clone " + source + " &>/dev/null").c_str());
+            if (silent && !is_no("silent"))
+            	system(string("git clone " + source + " &>/dev/null").c_str());
+            else
+            	system(string("git clone " + source).c_str());
             maindir();
 
             if (!dir_exists(target)) {
@@ -371,9 +379,7 @@ bool Package::package() {
 }
 
 bool Package::build(bool silent) {
-	bool do_package = !is_yes("no-package") && !sources.empty();
-
-    if (do_package && file_exists(get_built() + "/" + name + ".cpio.gz")) {
+    if (!is_yes("no-package") && file_exists(get_built() + "/" + name + ".cpio.gz")) {
 		err("already built");
 	}
 
@@ -387,8 +393,10 @@ bool Package::build(bool silent) {
 
 	makedir(get_build_path());
 
-	if (!get_sources()) { err("couldn't get sources"); }
+	if (!get_sources(silent)) { err("couldn't get sources"); }
 	if (!extract_archives()) { err("couldn't extract archives"); }
+
+	bool do_package = !is_yes("no-package") && !sources.empty();
 
 	if (do_package) {
 		dest = get_build_path() + "/" + name + "-dest";
@@ -400,7 +408,7 @@ bool Package::build(bool silent) {
 	if (!create_script()) { err("no build section"); }
 
 	changedir(get_build_path());
-    if (silent)
+    if (silent && !is_no("silent"))
         system("bash build.sh &>/dev/null");
     else
         system("bash build.sh");

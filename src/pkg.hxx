@@ -18,7 +18,7 @@ class Package {
 
     bool read(string file);
 
-    bool get_sources();
+    bool get_sources(bool silent = true);
     void get_archives();
     bool extract_archives();
     vector<string> get_depends();
