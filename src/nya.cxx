@@ -112,7 +112,6 @@ void build(vector<string> pkgs) {
 }
 
 int main(int argc, char *argv[]) {
-	if (getuid()) { print("run as root"); return 1; }
 	--argc;
 	if (argc < 1) { usage(argv[0]); return 1; }
 	vector<string> args(argv + 1, argv + (argc + 1));
@@ -139,13 +138,15 @@ int main(int argc, char *argv[]) {
 	if (!init(config))
 		return 1;
 
+	if (getuid() && !is_yes("no-root")) { print("run as root"); return 1; }
+
 	if (action == "emerge") {
 		emerge(pkgs);
 	} else if (action == "build") {
 		build(pkgs);
 	} else if (action == "install") {
 		if (is_yes("no-package")) {
-			return;
+			return 1;
 		}
 
 		for (auto pkg: pkgs) {
