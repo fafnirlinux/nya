@@ -408,6 +408,8 @@ bool Package::build(bool silent) {
 
 	if (!create_script()) { err("no build section"); }
 
+	msg("building");
+
 	changedir(get_build_path());
     if (silent && !is_no("silent"))
         system("bash build.sh &>/dev/null");

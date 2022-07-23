@@ -39,6 +39,10 @@ void dependency(string pkgname) {
 }
 
 void emerge(vector<string> pkgs) {
+	if (is_yes("no-package")) {
+		return;
+	}
+
 	if (is_yes("no-deps")) {
 		for (auto pkgname: pkgs) {
 			Package* pkg = get_pkg(pkgname);
@@ -139,6 +143,10 @@ int main(int argc, char *argv[]) {
 	} else if (action == "build") {
 		build(pkgs);
 	} else if (action == "install") {
+		if (is_yes("no-package")) {
+			return;
+		}
+
 		for (auto pkg: pkgs) {
 			if (!get_pkg(pkg)->install()) break;
 		}
