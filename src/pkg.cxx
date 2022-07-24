@@ -256,8 +256,8 @@ vector<string> Package::placeholders_sect(vector<string> lines) {
 string Package::placeholders(string line) {
     replace("%dest", dest);
 
-  	replace("%conf", "conf");
-	replace("%make", "_make");
+  	replace("%conf", "./configure --prefix=%prefix $xconfflags");
+	replace("%make", "make -j%threads");
 	replace("%inst", "inst");
 
 	replace("%dl", get_dl_path());
