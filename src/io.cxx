@@ -451,34 +451,24 @@ void maindir() {
 }
 
 vector<string> get_options(string option) {
-	vector<string> option_file = read_file(get_pkg_file(option));
+	vector<string> result;
 
-    bool valid = false;
+    for (auto line: read_section(read_file(get_pkg_file(option)), "options")) {
+    	string pkgfile = get_pkg_file(line);
 
-    vector<string> options;
+        if (file_exists(pkgfile)) {
+        	map<string, string> data = read_variables(read_file(pkgfile));
 
-    for (auto line: option_file) {
-    	if (!valid && line == "[options]")
-        	valid = true;
-        else if (valid) {
-        	string pkgfile = get_pkg_file(line);
-
-        	if (file_exists(pkgfile)) {
-        		map<string, string> data = read_variables(read_file(pkgfile));
-
-        		if (!get_value(data, "option=" + option).empty())
-        			options.push_back(line);
-        	}
+        	if (!get_value(data, "option=" + option).empty())
+        		result.push_back(line);
         }
     }
 
-    return options;
+    return result;
 }
 
 string get_choose(string option) {
 	vector<string> options = get_options(option);
-
-	if (options.empty()) return "";
 
 	string choose = get_val(option);
 
