@@ -459,7 +459,9 @@ vector<string> get_options(string option) {
         if (file_exists(pkgfile)) {
         	map<string, string> data = read_variables(read_file(pkgfile));
 
-        	if (!get_value(data, "option=" + option).empty())
+        	string val = get_value(data, "option");
+
+        	if (!val.empty() && val == option)
         		result.push_back(line);
         }
     }
@@ -475,17 +477,18 @@ string get_choose(string option) {
 	if (!choose.empty()) {
 		if (contains(options, choose))
 			return choose;
-	} else
+	} else if (options.size() > 0)
 		return options.front();
 
 	return "";
 }
 
 bool action(string name, bool emerge) {
-	Package *pkg = get_pkg(name);
-	string pkgfile = get_pkg_file(name);
+	if (name.empty()) return false;
 
-	if (!pkg->read(pkgfile)) return false;
+	Package *pkg = get_pkg(name);
+
+	if (!pkg->read(get_pkg_file(name))) return false;
 
 	if (!pkg->sect("options").empty())
 		return action(get_choose(name));
