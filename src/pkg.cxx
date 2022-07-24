@@ -318,7 +318,7 @@ bool Package::create_script() {
   	else if (!val("workdir").empty())
   		line("cd " + val("workdir"));
 
-    if (archives.size() == 1 || _is_yes("force-patch")) {
+    if (sources.size() == 1 || _is_yes("force-patch")) {
         vector<string> list = get_contents(get_files_path() + "/patches");
 
 	    for (auto patch: list) {
