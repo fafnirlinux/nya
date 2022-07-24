@@ -71,9 +71,8 @@ vector<string> Package::get_depends() {
 	vector<string> result;
 
 	for (auto dep: deps) {
-		if (!count(result.begin(), result.end(), dep)) {
+		if (contains(result, dep))
 			result.push_back(dep);
-		}
 	}
 
 	return result;
@@ -254,6 +253,12 @@ vector<string> Package::placeholders_sect(vector<string> lines, bool is_build) {
                         result.push_back(placeholders(line));
                     }
                 }
+            } else {
+            	string choose = get_choose(line.erase(0, 1));
+
+            	if (!choose.empty()) {
+            		result.push_back(choose);
+            	}
             }
         } else {
             result.push_back(line);

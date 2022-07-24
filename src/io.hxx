@@ -30,6 +30,8 @@ using namespace filesystem;
 #define print(x) cout << x << endl;
 #define strpos(x, y) x.find(y) != string::npos
 
+#define contains(x, y) count(x.begin(), x.end(), y)
+
 #define makedir(x) mkdir(x.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH)
 #define changedir(x) chdir(x.c_str())
 #define perms(x) permissions(x, perms::owner_all | perms::group_all, perm_options::add);
@@ -69,6 +71,9 @@ int copy_data(struct archive *ar, struct archive *aw);
 string readsymlink(string path);
 
 void maindir();
+
+vector<string> get_options(string option);
+string get_choose(string option);
 
 bool add_placeholder(string placeholder, string value);
 bool placeholder_exists(string placeholder);

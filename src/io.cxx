@@ -450,6 +450,39 @@ void maindir() {
 	changedir(src);
 }
 
+vector<string> get_options(string option) {
+	vector<string> option_file = read_file(get_pkg_file(option));
+
+    bool valid = false;
+
+    vector<string> options;
+
+    for (auto line: option_file) {
+    	if (!valid && line == "[options]")
+        	valid = true;
+        else if (valid && file_exists(get_pkg_file(line)))
+        	options.push_back(line);
+    }
+
+    return options;
+}
+
+string get_choose(string option) {
+	vector<string> options = get_options(option);
+
+	if (options.empty()) return "";
+
+	string choose = get_val(option);
+
+	if (!choose.empty()) {
+		if (contains(options, choose))
+			return choose;
+	} else
+		return options.front();
+
+	return "";
+}
+
 string apply_placeholders(string line) {
 	string result(line);
 
