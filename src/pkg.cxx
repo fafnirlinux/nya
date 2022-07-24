@@ -73,7 +73,7 @@ vector<string> Package::get_depends() {
 	vector<string> result;
 
 	for (auto dep: deps) {
-		if (contains(result, dep))
+		if (!contains(result, dep))
 			result.push_back(dep);
 	}
 
