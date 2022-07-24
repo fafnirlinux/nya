@@ -456,6 +456,7 @@ bool Package::build(bool silent) {
 	if (!create_script()) {
 		if (read_section(read_file(pkgfile), "deps").empty())
 			err("empty package");
+
 		return true;
 	}
 

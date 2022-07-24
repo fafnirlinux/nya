@@ -21,9 +21,9 @@ vector<string> dependencies;
 vector<string> marked;
 
 void dependency(string pkgname) {
-	Package* pkg = get_pkg(pkgname);
-	if(pkg == NULL) return;
-	pkg->read(get_pkg_file(pkgname));
+	Package *pkg = get_pkg(pkgname);
+	if (pkg == NULL) return;
+	if (!pkg->read(get_pkg_file(pkgname))) return;
 
 	vector<string> deps = pkg->get_depends();
 
@@ -45,13 +45,7 @@ void emerge(vector<string> pkgs) {
 
 	if (is_yes("no-deps")) {
 		for (auto pkgname: pkgs) {
-			Package* pkg = get_pkg(pkgname);
-
-			if (pkg->build()) {
-            	if (!pkg->install()) {
-                	break;
-            	}
-            }
+			if (!action(pkgname)) break;
 		}
 
 		return;
@@ -63,16 +57,9 @@ void emerge(vector<string> pkgs) {
 		bool error;
 
 		for (auto dep: dependencies) {
-			Package* pkg = get_pkg(dep);
-
-			if (pkg->build()) {
-            	if (!pkg->install()) {
-            		error = true;
-                	break;
-            	}
-			} else {
+			if (!action(dep)) {
 				error = true;
-				break;
+                break;
 			}
 		}
 
@@ -83,11 +70,7 @@ void emerge(vector<string> pkgs) {
 void build(vector<string> pkgs) {
 	if (is_yes("no-deps")) {
 		for (auto pkgname: pkgs) {
-			Package* pkg = get_pkg(pkgname);
-
-			if (!pkg->build(false)) {
-                break;
-            }
+			if (!action(pkgname, false)) break;
 		}
 
 		return;
@@ -99,9 +82,7 @@ void build(vector<string> pkgs) {
 		bool error;
 
 		for (auto dep: dependencies) {
-			Package* pkg = get_pkg(dep);
-
-			if (!pkg->build(false)) {
+			if (!action(dep, false)) {
             	error = true;
                 break;
             }

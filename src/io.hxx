@@ -75,6 +75,8 @@ void maindir();
 vector<string> get_options(string option);
 string get_choose(string option);
 
+bool action(string name, bool emerge = true);
+
 bool add_placeholder(string placeholder, string value);
 bool placeholder_exists(string placeholder);
 string apply_placeholders(string line);

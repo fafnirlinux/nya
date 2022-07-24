@@ -481,6 +481,25 @@ string get_choose(string option) {
 	return "";
 }
 
+bool action(string name, bool emerge) {
+	Package *pkg = get_pkg(name);
+	string pkgfile = get_pkg_file(name);
+
+	if (!pkg->read(pkgfile)) return false;
+
+	if (!read_section(pkg->data, "options").empty())
+		return action(get_choose(name));
+
+	if (pkg->build(emerge)) {
+		if (emerge) {
+			if (pkg->install())
+				return true;
+		}
+	}
+
+	return false;
+}
+
 string apply_placeholders(string line) {
 	string result(line);
 
