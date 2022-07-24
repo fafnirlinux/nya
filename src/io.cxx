@@ -136,6 +136,7 @@ bool init(string cfg){
 	add_ext("tar.gz");
 	add_ext("tar.xz");
     add_ext("tar.bz2");
+    add_ext("tar.lz");
 
 	string threads;
 	if (!conf("make_threads").empty()) threads = conf("make_threads"); else threads = to_string(sysconf(_SC_NPROCESSORS_ONLN));
