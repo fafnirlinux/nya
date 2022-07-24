@@ -253,7 +253,7 @@ vector<string> Package::placeholders_sect(vector<string> lines, bool is_build) {
                 Package *pkg = get_pkg(package);
 
                 if (pkg != NULL && pkg->read(get_pkg_file(package))) {
-                	if (is_build) {
+                	if (is_build && sect == "patches") {
                 		vector<string> list = get_contents(pkg->get_files_path() + "/patches");
 
 	    				for (auto patch: list) {
@@ -263,10 +263,10 @@ vector<string> Package::placeholders_sect(vector<string> lines, bool is_build) {
                 				result.push_back("apply_patch " + patch);
             				}
 	    				}
-	    			}
-
-                    for (auto line: pkg->sect(sect)) {
-                        result.push_back(placeholders(line));
+	    			} else {
+                    	for (auto line: pkg->sect(sect)) {
+                        	result.push_back(placeholders(line));
+                    	}
                     }
                 }
             } else {
