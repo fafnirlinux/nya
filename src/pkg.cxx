@@ -449,8 +449,13 @@ bool Package::build(bool silent) {
   	}
 
 	if (!create_script()) {
-		if (read_section(read_file(pkgfile), "deps").empty())
+		if (read_section(read_file(pkgfile), "deps").empty()) {
 			err("empty package");
+		}
+
+		for (auto dep: get_depends()) {
+			if (!action(dep)) return false;
+		}
 
 		return true;
 	}
