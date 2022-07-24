@@ -222,7 +222,7 @@ string Package::placeholders_var(string line) {
     return line;
 }
 
-vector<string> Package::placeholders_sect(vector<string> lines) {
+vector<string> Package::placeholders_sect(vector<string> lines, bool is_build) {
     vector<string> result;
 
     for (auto line: lines) {
@@ -238,14 +238,16 @@ vector<string> Package::placeholders_sect(vector<string> lines) {
                 Package *pkg = get_pkg(package);
 
                 if (pkg != NULL && pkg->read(get_pkg_file(package))) {
-                	vector<string> list = get_contents(pkg->get_files_path() + "/patches");
+                	if (is_build) {
+                		vector<string> list = get_contents(pkg->get_files_path() + "/patches");
 
-	    			for (auto patch: list) {
-		    			string filename(basename(patch.c_str()));
+	    				for (auto patch: list) {
+		    				string filename(basename(patch.c_str()));
 
-		    			if (strpos(filename, ".patch") || strpos(filename, ".diff")) {
-                			result.push_back("apply_patch " + patch);
-            			}
+		    				if (strpos(filename, ".patch") || strpos(filename, ".diff")) {
+                				result.push_back("apply_patch " + patch);
+            				}
+	    				}
 	    			}
 
                     for (auto line: pkg->sect(sect)) {
@@ -307,7 +309,7 @@ bool Package::create_script() {
 	    }
     }
 
-    for (auto line: placeholders_sect(lines)) {
+    for (auto line: placeholders_sect(lines, true)) {
         line(line);
     }
 

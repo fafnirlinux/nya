@@ -28,7 +28,7 @@ class Package {
     string get_db_path();
 
     string placeholders_var(string line);
-    vector<string> placeholders_sect(vector<string> lines);
+    vector<string> placeholders_sect(vector<string> lines, bool is_build = false);
     string placeholders(string line);
 
     bool create_script();
