@@ -488,7 +488,10 @@ bool action(string name, bool emerge) {
 
 	Package *pkg = get_pkg(name);
 
-	if (!pkg->read(get_pkg_file(name))) return false;
+	if (!pkg->read(get_pkg_file(name))) {
+		print("no such package");
+		return false;
+	}
 
 	if (!pkg->sect("options").empty())
 		return action(get_choose(name));

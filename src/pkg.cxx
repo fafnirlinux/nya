@@ -429,11 +429,6 @@ bool Package::build(bool silent) {
 
 	string pkgfile = get_pkg_file(name);
 
-    if (!read(pkgfile)) {
-		print("no such package");
-        return false;
-	}
-
 	if (!check_hostdeps()) return false;
 
 	if (dir_exists(get_build_path()))
