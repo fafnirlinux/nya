@@ -55,5 +55,5 @@ class Package {
 
     vector<string> data, deps;
 
-    bool is_read;
+    bool is_read = false;
 };

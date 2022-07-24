@@ -33,9 +33,7 @@ bool Package::_is_no(string var) {
 
 bool Package::read(string file) {
 	if (is_read) return true;
-
-	if (!file_exists(file))
-		return false;
+	if (!file_exists(file)) return false;
 
 	data = read_file(file);
 	variables = read_variables(data);
@@ -429,7 +427,9 @@ bool Package::build(bool silent) {
 		return true;
 	}
 
-    if (!read(get_pkg_file(name))) {
+	string pkgfile = get_pkg_file(name);
+
+    if (!read(pkgfile)) {
 		print("no such package");
         return false;
 	}
@@ -453,7 +453,11 @@ bool Package::build(bool silent) {
   		dest = get_rootfs();
   	}
 
-	if (!create_script()) { err("no build section"); }
+	if (!create_script()) {
+		if (read_section(read_file(pkgfile), "deps").empty())
+			err("empty package");
+		return true;
+	}
 
 	msg("building");
 
