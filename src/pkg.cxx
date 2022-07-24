@@ -238,6 +238,16 @@ vector<string> Package::placeholders_sect(vector<string> lines) {
                 Package *pkg = get_pkg(package);
 
                 if (pkg != NULL && pkg->read(get_pkg_file(package))) {
+                	vector<string> list = get_contents(pkg->get_files_path() + "/patches");
+
+	    			for (auto patch: list) {
+		    			string filename(basename(patch.c_str()));
+
+		    			if (strpos(filename, ".patch") || strpos(filename, ".diff")) {
+                			result.push_back("apply_patch " + patch);
+            			}
+	    			}
+
                     for (auto line: pkg->sect(sect)) {
                         result.push_back(placeholders(line));
                     }
