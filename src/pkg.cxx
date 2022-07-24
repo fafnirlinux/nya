@@ -80,9 +80,7 @@ vector<string> Package::get_depends() {
 }
 
 bool Package::get_sources(bool silent) {
-    for (auto src: sect("srcs")) {
-        src = placeholders_var(src);
-
+    for (auto src: placeholders_sect(sect("srcs"))) {
         string filename;
 
         if (strpos(src, "::")) {
