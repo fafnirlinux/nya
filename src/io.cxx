@@ -460,8 +460,16 @@ vector<string> get_options(string option) {
     for (auto line: option_file) {
     	if (!valid && line == "[options]")
         	valid = true;
-        else if (valid && file_exists(get_pkg_file(line)))
-        	options.push_back(line);
+        else if (valid) {
+        	string pkgfile = get_pkg_file(line);
+
+        	if (file_exists(pkgfile)) {
+        		map<string, string> data = read_variables(read_file(pkgfile));
+
+        		if (!get_value(data, "option=" + option).empty())
+        			options.push_back(line);
+        	}
+        }
     }
 
     return options;
