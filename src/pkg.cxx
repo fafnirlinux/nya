@@ -92,7 +92,7 @@ bool Package::get_sources(bool silent) {
     }
 
     char buff[100];
-    int i = 1, all = sources.size();
+    int i;
 
     for (itr = sources.begin(); itr != sources.end(); ++itr) {
         string source = itr->first;
@@ -112,10 +112,11 @@ bool Package::get_sources(bool silent) {
             exists = dir_exists(target);
         }
 
-        snprintf(buff, sizeof(buff), " [%i/%i]", i, all);
+        snprintf(buff, sizeof(buff), " [%i/%i]", i+1, sources.size());
 
 		if (exists) {
             msg(filename + " already exists" + string(buff));
+            ++i;
 			continue;
         }
 
@@ -165,13 +166,15 @@ bool Package::get_sources(bool silent) {
 
 bool Package::extract_archives() {
     char buff[100];
-    int i = 1, all = archives.size();
+    int i;
 
     for (itr = archives.begin(); itr != archives.end(); ++itr) {
-        snprintf(buff, sizeof(buff), " [%i/%i]", i, all);
+        snprintf(buff, sizeof(buff), " [%i/%i]", i+1, archives.size());
 
 		msg("extracting " + itr->first + string(buff));
 		extract_archive(get_dl_path() + "/" + itr->first, get_build_path());
+
+		++i;
 	}
 
 	for (itr = archives.begin(); itr != archives.end(); ++itr) {
@@ -458,7 +461,7 @@ bool Package::install() {
 
 bool Package::remove() {
 	if (!file_exists(get_db_path() + "/pkgdata")) {
-		err("already installed");
+		err("not installed");
 	}
 
 	if (!read(get_db_path() + "/pkgdata")) {

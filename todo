@@ -1,0 +1,3 @@
+-do not read packages that already read
+-add hostdeps, will check executables
+-add rsync hostdep to glibc
