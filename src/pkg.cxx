@@ -16,7 +16,7 @@ string Package::getName() {
 }
 
 string Package::val(string var) {
-	return get_value(variables, var);
+	return placeholders_var(get_value(variables, var));
 }
 
 vector<string> Package::sect(string sect, bool checks) {
@@ -280,9 +280,10 @@ bool Package::create_script() {
   	line("#!/bin/sh");
     line("source common.sh");
 
-  	if (sources.size() == 1) {
+  	if (sources.size() == 1)
   		line("cd " + strip_extension(sources.begin()->second));
-  	}
+  	else if (!val("workdir").empty())
+  		line("cd " + val("workdir"));
 
     if (archives.size() == 1 || _is_yes("force-patch")) {
         vector<string> list = get_contents(get_files_path() + "/patches");
