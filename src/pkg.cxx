@@ -92,7 +92,7 @@ bool Package::get_sources(bool silent) {
     }
 
     char buff[100];
-    int i;
+    int i = 1;
 
     for (itr = sources.begin(); itr != sources.end(); ++itr) {
         string source = itr->first;
@@ -112,7 +112,7 @@ bool Package::get_sources(bool silent) {
             exists = dir_exists(target);
         }
 
-        snprintf(buff, sizeof(buff), " [%i/%i]", i+1, sources.size());
+        snprintf(buff, sizeof(buff), " [%i/%i]", i, sources.size());
 
 		if (exists) {
             msg(filename + " already exists" + string(buff));
@@ -166,10 +166,10 @@ bool Package::get_sources(bool silent) {
 
 bool Package::extract_archives() {
     char buff[100];
-    int i;
+    int i = 1;
 
     for (itr = archives.begin(); itr != archives.end(); ++itr) {
-        snprintf(buff, sizeof(buff), " [%i/%i]", i+1, archives.size());
+        snprintf(buff, sizeof(buff), " [%i/%i]", i, archives.size());
 
 		msg("extracting " + itr->first + string(buff));
 		extract_archive(get_dl_path() + "/" + itr->first, get_build_path());
@@ -384,7 +384,8 @@ bool Package::package() {
 
 bool Package::build(bool silent) {
     if (!is_yes("no-package") && file_exists(get_built() + "/" + name + ".cpio.gz")) {
-		err("already built");
+		msg("already built");
+		return true;
 	}
 
     if (!read(get_pkg_file(name))) {
@@ -427,7 +428,8 @@ bool Package::build(bool silent) {
 
 bool Package::install() {
 	if (file_exists(get_db_path() + "/pkgdata")) {
-		err("already installed");
+		msg("already installed");
+		return true;
 	}
 
 	string archive(get_built() + "/" + name + ".cpio.gz");
