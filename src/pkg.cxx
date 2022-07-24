@@ -255,8 +255,10 @@ vector<string> Package::placeholders_sect(vector<string> lines) {
 
 string Package::placeholders(string line) {
     replace("%dest", dest);
-  	replace("%mk", "%make && inst");
-  	replace("%inst", "inst");
+
+  	replace("%conf", "conf");
+	replace("%make", "_make");
+	replace("%inst", "inst");
 
 	replace("%dl", get_dl_path());
 	replace("%src", get_build_path());

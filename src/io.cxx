@@ -147,10 +147,6 @@ bool init(string cfg){
 	add_placeholder("%prefix", prefix);
 	add_placeholder("%threads", threads);
     add_placeholder("%arch", "x86_64");
-
-	add_placeholder("%conf", "./configure --prefix=" + prefix);
-	add_placeholder("%make", "make -j" + threads);
-
 	add_placeholder("%stuff", stuff);
 
 	maindir();
