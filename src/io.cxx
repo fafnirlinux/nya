@@ -487,7 +487,7 @@ bool action(string name, bool emerge) {
 
 	if (!pkg->read(pkgfile)) return false;
 
-	if (!read_section(pkg->data, "options").empty())
+	if (!pkg->sect("options").empty())
 		return action(get_choose(name));
 
 	if (pkg->build(emerge)) {
