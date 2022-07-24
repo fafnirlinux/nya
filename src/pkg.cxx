@@ -32,6 +32,8 @@ bool Package::_is_no(string var) {
 }
 
 bool Package::read(string file) {
+	if (is_read) return true;
+
 	if (!file_exists(file))
 		return false;
 
@@ -47,6 +49,8 @@ bool Package::read(string file) {
 	deps = placeholders_sect(sect("deps"));
 
 	fullname = name + " v" + ver;
+
+	is_read = true;
 
 	return true;
 }
@@ -76,6 +80,20 @@ vector<string> Package::get_depends() {
 	}
 
 	return result;
+}
+
+bool Package::check_hostdeps() {
+	vector<string> hostdeps = sect("hostdeps");
+
+	if (!hostdeps.empty()) {
+		for (auto hostdep: hostdeps) {
+			if (!system(string("which " + hostdep + " > /dev/null 2>&1").c_str())) {
+				err("missing " + hostdep);
+			}
+		}
+	}
+
+	return true;
 }
 
 bool Package::get_sources(bool silent) {
@@ -415,6 +433,8 @@ bool Package::build(bool silent) {
 		print("no such package");
         return false;
 	}
+
+	if (!check_hostdeps()) return false;
 
 	if (dir_exists(get_build_path()))
 		system(string("rm -rf " + get_build_path()).c_str());

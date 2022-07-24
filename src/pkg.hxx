@@ -18,6 +18,8 @@ class Package {
 
     bool read(string file);
 
+    bool check_hostdeps();
+
     bool get_sources(bool silent = true);
     void get_archives();
     bool extract_archives();
@@ -52,4 +54,6 @@ class Package {
     map<string, string>::iterator itr;
 
     vector<string> data, deps;
+
+    bool is_read;
 };
