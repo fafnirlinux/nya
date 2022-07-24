@@ -23,6 +23,14 @@ vector<string> Package::sect(string sect, bool checks) {
 	return read_section(data, sect, checks);
 }
 
+bool Package::_is_yes(string var) {
+	return val(var) == "yes";
+}
+
+bool Package::_is_no(string var) {
+	return val(var) == "no";
+}
+
 bool Package::read(string file) {
 	if (!file_exists(file))
 		return false;
@@ -276,8 +284,7 @@ bool Package::create_script() {
   		line("cd " + strip_extension(sources.begin()->second));
   	}
 
-    if (archives.size() == 1) {
-
+    if (archives.size() == 1 || _is_yes("force-patch")) {
         vector<string> list = get_contents(get_files_path() + "/patches");
 
 	    for (auto patch: list) {
@@ -288,8 +295,6 @@ bool Package::create_script() {
             }
 	    }
     }
-
-    line("init_flags");
 
     for (auto line: placeholders_sect(lines)) {
         line(line);

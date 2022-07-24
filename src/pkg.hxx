@@ -37,6 +37,9 @@ class Package {
     bool build(bool silent = true);
     bool install();
     bool remove();
+
+    bool _is_yes(string var);
+    bool _is_no(string var);
   private:
     string name, desc, ver;
     string display_name;
