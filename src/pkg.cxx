@@ -133,7 +133,8 @@ bool Package::get_sources(bool silent) {
             exists = dir_exists(target);
         }
 
-        snprintf(buff, sizeof(buff), " [%i/%i]", i, sources.size());
+		if (sources.size() > 1)
+        	snprintf(buff, sizeof(buff), " [%i/%i]", i, sources.size());
 
 		if (exists) {
             msg(filename + " already exists" + string(buff));
@@ -190,7 +191,8 @@ bool Package::extract_archives() {
     int i = 1;
 
     for (itr = archives.begin(); itr != archives.end(); ++itr) {
-        snprintf(buff, sizeof(buff), " [%i/%i]", i, archives.size());
+    	if (archives.size() > 1)
+        	snprintf(buff, sizeof(buff), " [%i/%i]", i, archives.size());
 
 		msg("extracting " + itr->first + string(buff));
 		extract_archive(get_dl_path() + "/" + itr->first, get_build_path());
@@ -293,6 +295,7 @@ string Package::placeholders(string line) {
 
 	replace("%dl", get_dl_path());
 	replace("%src", get_build_path());
+	replace("%patches", "%files/patches");
 	replace("%files", get_files_path());
 
     return apply_placeholders(placeholders_var(line));
@@ -318,7 +321,7 @@ bool Package::create_script() {
   	else if (!val("workdir").empty())
   		line("cd " + val("workdir"));
 
-    if (sources.size() == 1 || _is_yes("force-patch")) {
+    if (!_is_yes("no-patch") && (sources.size() == 1 || _is_yes("force-patch"))) {
         vector<string> list = get_contents(get_files_path() + "/patches");
 
 	    for (auto patch: list) {
@@ -445,7 +448,7 @@ bool Package::build(bool silent) {
 		dest = get_build_path() + "/" + name + "-dest";
   		makedir(dest);
   	} else {
-  		dest = get_rootfs();
+  		dest = get_build_path();
   	}
 
 	if (!create_script()) {

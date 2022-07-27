@@ -114,11 +114,11 @@ bool init(string cfg){
 	if (!conf("src").empty()) src = conf("src"); else src = rootfs + "/src";
 
 	if (!conf("db").empty()) db = conf("db"); else db = src + "/db";
-	if (!conf("build_dir").empty()) build = conf("build_dir"); else build = src + "/build";
-	if (!conf("dl_dir").empty()) dl = conf("dl_dir"); else dl = src + "/dl";
-	if (!conf("built_dir").empty()) built = conf("built_dir"); else built = src + "/built";
+	if (!conf("build").empty()) build = conf("build"); else build = src + "/build";
+	if (!conf("dl").empty()) dl = conf("dl"); else dl = src + "/dl";
+	if (!conf("built").empty()) built = conf("built"); else built = src + "/built";
 	if (!conf("pkgdir").empty()) pkgdir = conf("pkgdir"); else pkgdir = src + "/pkg";
-	if (!conf("stuff_dir").empty()) stuff = conf("stuff_dir"); else stuff = src + "/stuff";
+	if (!conf("stuff").empty()) stuff = conf("stuff"); else stuff = src + "/stuff";
 
 	makedir(rootfs);
 	makedir(src);
