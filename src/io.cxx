@@ -137,6 +137,7 @@ bool init(string cfg){
 	add_ext("tar.xz");
     add_ext("tar.bz2");
     add_ext("tar.lz");
+    add_ext("zip");
 
 	string threads;
 	if (!conf("make_threads").empty()) threads = conf("make_threads"); else threads = to_string(sysconf(_SC_NPROCESSORS_ONLN));
@@ -601,8 +602,8 @@ bool is_no(string var) {
 	return get_val(var) == "no";
 }
 
-map<string, string> get_config_data() {
-	return config_data;
+map<string, string> *get_config_data() {
+	return &config_data;
 }
 
 string get_cwd() {

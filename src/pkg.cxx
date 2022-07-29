@@ -133,8 +133,7 @@ bool Package::get_sources(bool silent) {
             exists = dir_exists(target);
         }
 
-		if (sources.size() > 1)
-        	snprintf(buff, sizeof(buff), " [%i/%i]", i, sources.size());
+        snprintf(buff, sizeof(buff), " [%i/%i]", i, sources.size());
 
 		if (exists) {
             msg(filename + " already exists" + string(buff));
@@ -191,8 +190,7 @@ bool Package::extract_archives() {
     int i = 1;
 
     for (itr = archives.begin(); itr != archives.end(); ++itr) {
-    	if (archives.size() > 1)
-        	snprintf(buff, sizeof(buff), " [%i/%i]", i, archives.size());
+        snprintf(buff, sizeof(buff), " [%i/%i]", i, archives.size());
 
 		msg("extracting " + itr->first + string(buff));
 		extract_archive(get_dl_path() + "/" + itr->first, get_build_path());
@@ -214,8 +212,12 @@ bool Package::extract_archives() {
 string Package::placeholders_var(string line) {
   	replace("%name", name);
 
+  	for (itr = get_config_data()->begin(); itr != get_config_data()->end(); ++itr) {
+		replace("%" + itr->first, placeholders_var(regex_replace(itr->second, regex("%pwd"), get_cwd())));
+	}
+
   	for (itr = variables.begin(); itr != variables.end(); ++itr) {
-		replace("%" + itr->first, itr->second);
+		replace("%" + itr->first, placeholders_var(itr->second));
 	}
 
     string str = line.substr(line.find("%") + 1);
@@ -266,8 +268,8 @@ vector<string> Package::placeholders_sect(vector<string> lines, bool is_build) {
             				}
 	    				}
 	    			} else {
-                    	for (auto line: pkg->sect(sect)) {
-                        	result.push_back(placeholders(line));
+                    	for (auto line: placeholders_sect(pkg->sect(sect))) {
+                        	result.push_back(line);
                     	}
                     }
                 }
@@ -292,6 +294,8 @@ string Package::placeholders(string line) {
   	replace("%conf", "./configure --prefix=%prefix $xconfflags");
 	replace("%make", "make -j%threads");
 	replace("%inst", "inst");
+
+	replace("%samu", "samu -j%threads");
 
 	replace("%dl", get_dl_path());
 	replace("%src", get_build_path());

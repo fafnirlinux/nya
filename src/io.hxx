@@ -52,7 +52,7 @@ string get_value(map<string, string> data, string var);
 string get_val(string var);
 bool is_yes(string var);
 bool is_no(string var);
-map<string, string> get_config_data();
+map<string, string> *get_config_data();
 bool package_exists(string name);
 string erase(string mainStr, string toErase);
 string get_dl();
