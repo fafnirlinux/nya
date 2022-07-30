@@ -133,8 +133,7 @@ bool Package::get_sources(bool silent) {
             exists = dir_exists(target);
         }
 
-        //string part = target + ".part";
-        string part = target;
+        string part = target + ".part";
 
         snprintf(buff, sizeof(buff), " [%i/%i]", i, sources.size());
 
@@ -153,7 +152,7 @@ bool Package::get_sources(bool silent) {
 
             curl_easy_setopt(curl, CURLOPT_URL, source.c_str());
 
-		    FILE *file = fopen(target.c_str(), "w");
+		    FILE *file = fopen(part.c_str(), "w");
 		    if (file) {
 			    curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
 
@@ -168,26 +167,26 @@ bool Package::get_sources(bool silent) {
 		    if (!file_exists(part) || file_size(part) == 0) {
 			    err("couldn't get " + filename);
                 rmfile(part);
-		    /*} else {
-		    	system(string("mv " + part + " " + filename).c_str());*/
+		    } else {
+		    	system(string("mv " + part + " " + filename).c_str());
 		    }
         } else {
             changedir(get_build_path());
-            /*if (silent && !is_no("silent"))
+            if (silent && !is_no("silent"))
             	system(string("git clone " + source + " " + filename + ".part &>/dev/null").c_str());
             else
-            	system(string("git clone " + source + " " + filename + ".part").c_str());*/
-            if (silent && !is_no("silent"))
+            	system(string("git clone " + source + " " + filename + ".part").c_str());
+            /*if (silent && !is_no("silent"))
             	system(string("git clone " + source + " &>/dev/null").c_str());
             else
-            	system(string("git clone " + source).c_str());
+            	system(string("git clone " + source).c_str());*/
             maindir();
 
             if (!dir_exists(part)) {
                 err("couldn't clone " + filename);
                 rmfile(part);
-            /*} else {
-            	system(string("mv " + part + " " + filename).c_str());*/
+            } else {
+            	system(string("mv " + part + " " + filename).c_str());
             }
         }
 
@@ -225,11 +224,15 @@ string Package::placeholders_var(string line) {
   	replace("%name", name);
 
   	for (itr = get_config_data()->begin(); itr != get_config_data()->end(); ++itr) {
-		replace("%" + itr->first, placeholders_var(regex_replace(itr->second, regex("%pwd"), get_cwd())));
+		replace("%" + itr->first, regex_replace(itr->second, regex("%pwd"), get_cwd()));
 	}
 
+	map<string, string>::iterator _itr;
+
   	for (itr = variables.begin(); itr != variables.end(); ++itr) {
-		replace("%" + itr->first, placeholders_var(itr->second));
+  		for (_itr = variables.begin(); _itr != variables.end(); ++_itr) {
+			replace("%" + itr->first, regex_replace(itr->second, regex("%" + _itr->first), _itr->second));
+		}
 	}
 
     string str = line.substr(line.find("%") + 1);
