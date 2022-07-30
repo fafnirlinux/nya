@@ -149,6 +149,7 @@ bool init(string cfg){
 	add_placeholder("%threads", threads);
     add_placeholder("%arch", "x86_64");
 	add_placeholder("%stuff", stuff);
+	add_placeholder("%build", build);
 
 	maindir();
 
