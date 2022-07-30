@@ -139,10 +139,11 @@ bool init(string cfg){
     add_ext("tar.lz");
     add_ext("zip");
 
+	string prefix;
+	if (!conf("prefix").empty()) prefix = conf("prefix"); else prefix = "/usr";
+
 	string threads;
 	if (!conf("make_threads").empty()) threads = conf("make_threads"); else threads = to_string(sysconf(_SC_NPROCESSORS_ONLN));
-
-	string prefix;
 
 	add_placeholder("%rootfs", rootfs);
 	add_placeholder("%prefix", prefix);

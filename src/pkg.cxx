@@ -168,7 +168,7 @@ bool Package::get_sources(bool silent) {
 			    err("couldn't get " + filename);
                 rmfile(part);
 		    } else {
-		    	system(string("mv " + part + " " + filename).c_str());
+		    	system(string("mv " + part + " " + target).c_str());
 		    }
         } else {
             changedir(get_build_path());
@@ -176,17 +176,13 @@ bool Package::get_sources(bool silent) {
             	system(string("git clone " + source + " " + filename + ".part &>/dev/null").c_str());
             else
             	system(string("git clone " + source + " " + filename + ".part").c_str());
-            /*if (silent && !is_no("silent"))
-            	system(string("git clone " + source + " &>/dev/null").c_str());
-            else
-            	system(string("git clone " + source).c_str());*/
             maindir();
 
             if (!dir_exists(part)) {
                 err("couldn't clone " + filename);
                 rmfile(part);
             } else {
-            	system(string("mv " + part + " " + filename).c_str());
+            	system(string("mv " + part + " " + target).c_str());
             }
         }
 
