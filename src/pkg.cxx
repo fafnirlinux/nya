@@ -1,9 +1,6 @@
 #include "pkg.hxx"
 #include "io.hxx"
 
-#include <string.h>
-#include <filesystem>
-
 #define msg(x) print(name + ": " + x)
 #define err(x) msg(x); return false
 
@@ -102,14 +99,14 @@ bool Package::get_sources(bool silent) {
             filename = src.substr(src.find("::") + 2);
             src = erase(src, "::" + filename);
         } else {
-            filename = basename(src.c_str());
+            filename = basename((char*)src.c_str());
         }
 
         if (is_archive(src)) {
-            archives.insert({basename(src.c_str()), strip_extension(filename)});
+            archives.insert(make_pair(basename((char*)src.c_str()), strip_extension(filename)));
 		}
 
-        sources.insert({src, filename});
+        sources.insert(make_pair(src, filename));
     }
 
     char buff[100];
@@ -124,7 +121,7 @@ bool Package::get_sources(bool silent) {
         bool git = !is_archive(source) && strpos(source, "git");
 
         if (!git) {
-            filename = basename(source.c_str());
+            filename = basename((char*)source.c_str());
             target = get_dl_path() + "/" + filename;
             exists = file_exists(target);
         } else {
@@ -272,7 +269,7 @@ vector<string> Package::placeholders_sect(vector<string> lines, bool is_build) {
                 		vector<string> list = get_contents(pkg->get_files_path() + "/patches");
 
 	    				for (auto patch: list) {
-		    				string filename(basename(patch.c_str()));
+		    				string filename(basename((char*)patch.c_str()));
 
 		    				if (strpos(filename, ".patch") || strpos(filename, ".diff")) {
                 				result.push_back("apply_patch " + patch);
@@ -340,7 +337,7 @@ bool Package::create_script() {
         vector<string> list = get_contents(get_files_path() + "/patches");
 
 	    for (auto patch: list) {
-		    string filename(basename(patch.c_str()));
+		    string filename(basename((char*)patch.c_str()));
 
 		    if (strpos(filename, ".patch") || strpos(filename, ".diff")) {
                 line("apply_patch " + patch);
@@ -379,7 +376,7 @@ bool Package::package() {
 	ofstream filelist(dest + "/files");
 
 	for (auto file: list) {
-		if (string(basename(file.c_str())).compare("files") == 0) continue;
+		if (string(basename((char*)file.c_str())).compare("files") == 0) continue;
 		filelist << erase(file, dest) << endl;
 	}
 

@@ -1,10 +1,12 @@
 #pragma once
 
 #include <string>
+#include <string.h>
 #include <cstring>
 #include <iostream>
 #include <filesystem>
 #include <fstream>
+#include <utility>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <vector>
@@ -14,6 +16,7 @@
 #include <iterator>
 #include <dirent.h>
 #include <fcntl.h>
+#include <libgen.h>
 
 #include <curl/curl.h>
 

@@ -574,7 +574,7 @@ map<string, string> read_variables(vector<string> data) {
 			string val = line.substr(line.find("=") + 1);
             string var = erase(line, "=" + val);
 
-            variables.insert({var, val});
+            variables.insert(make_pair(var, val));
 		}
 	}
 
