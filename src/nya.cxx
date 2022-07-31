@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
 	if (others.empty()) { usage(argv[0]); return 1; }
 	string config;
 	vector<string> pkgs;
-	int i;
+	int i = 0;
 	for (auto str: others) {
 		if (str == "--config") {
 			if (i+1 < others.size())
