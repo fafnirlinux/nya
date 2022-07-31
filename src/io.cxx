@@ -99,10 +99,10 @@ bool init(string cfg){
 
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 
-    if (file_exists(DEFAULT_CONFIG)) {
-    	config = read_file(DEFAULT_CONFIG, true);
-    } else if (file_exists(cfg)) {
+    if (file_exists(cfg)) {
     	config = read_file(cfg, true);
+    } else if (file_exists(DEFAULT_CONFIG)) {
+    	config = read_file(DEFAULT_CONFIG, true);
     } else {
     	return false;
    	}
