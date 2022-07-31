@@ -302,7 +302,7 @@ vector<string> Package::placeholders_sect(vector<string> lines, bool is_build) {
 string Package::placeholders(string line) {
     replace("%dest", dest);
 
-  	replace("%conf", "./configure --prefix=%prefix $xconfflags");
+  	replace("%conf", "./configure --prefix=%prefix");
 	replace("%make", "make -j%threads");
 	replace("%inst", "inst");
 
