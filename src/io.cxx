@@ -503,6 +503,8 @@ bool action(string name, bool emerge) {
 		if (emerge) {
 			if (pkg->install())
 				return true;
+		} else {
+			return true;
 		}
 	}
 

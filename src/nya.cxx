@@ -157,7 +157,7 @@ int main(int argc, char *argv[]) {
 		}
 	} else {
 		print("invalid action");
-		return 1;
+		ret = 1;
 	}
 
 	curl_global_cleanup();
