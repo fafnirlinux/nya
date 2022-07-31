@@ -140,7 +140,7 @@ bool init(string cfg){
     add_ext("zip");
 
 	string prefix;
-	if (!conf("prefix").empty()) prefix = conf("prefix"); else prefix = "/usr";
+	if (!conf("prefix").empty()) prefix = conf("prefix");
 
 	string threads;
 	if (!conf("make_threads").empty()) threads = conf("make_threads"); else threads = to_string(sysconf(_SC_NPROCESSORS_ONLN));
