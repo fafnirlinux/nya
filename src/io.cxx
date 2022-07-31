@@ -439,12 +439,8 @@ string strip_extension(string filename) {
 	for (auto ext: archive_extensions) {
         if (strpos(filename, string("."+ext))) {
 		    filename = erase(filename, string("."+ext));
-            erased = true;
         }
 	}
-
-    if (erased)
-	    filename.pop_back();
 
 	return filename;
 }
