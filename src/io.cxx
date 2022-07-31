@@ -437,8 +437,8 @@ string strip_extension(string filename) {
     bool erased;
 
 	for (auto ext: archive_extensions) {
-        if (strpos(filename, ext)) {
-		    filename = erase(filename, ext);
+        if (strpos(filename, string("."+ext))) {
+		    filename = erase(filename, string("."+ext));
             erased = true;
         }
 	}
