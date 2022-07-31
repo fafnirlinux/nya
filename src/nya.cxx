@@ -38,58 +38,68 @@ void dependency(string pkgname) {
 		dependencies.push_back(pkgname);
 }
 
-void emerge(vector<string> pkgs) {
+int emerge(vector<string> pkgs) {
 	if (is_yes("no-package")) {
-		return;
+		return 1;
 	}
+
+	int ret = 0;
 
 	if (is_yes("no-deps")) {
 		for (auto pkgname: pkgs) {
-			if (!action(pkgname)) break;
+			if (!action(pkgname)) {
+				ret = 1;
+				break;
+			}
 		}
 
-		return;
+		return ret;
 	}
 
 	for (auto pkgname: pkgs) {
 		dependency(pkgname);
 
-		bool error;
-
 		for (auto dep: dependencies) {
 			if (!action(dep)) {
-				error = true;
+				ret = 1;
                 break;
 			}
 		}
 
-		if (error) break;
+		if (ret == 1) break;
 	}
+
+	return ret;
 }
 
-void build(vector<string> pkgs) {
+int build(vector<string> pkgs) {
+	int ret = 0;
+
 	if (is_yes("no-deps")) {
 		for (auto pkgname: pkgs) {
-			if (!action(pkgname, false)) break;
+			if (!action(pkgname, false)) {
+				ret = 1;
+				break;
+			}
 		}
 
-		return;
+		return ret;
 	}
 
 	for (auto pkgname: pkgs) {
 		dependency(pkgname);
 
-		bool error;
-
 		for (auto dep: dependencies) {
 			if (!action(dep, false)) {
-            	error = true;
+            	ret = 1;
                 break;
             }
 		}
 
-		if (error) break;
+		if (ret == 1) break;
 	}
+
+	return ret;
 }
 
 int main(int argc, char *argv[]) {
@@ -121,21 +131,29 @@ int main(int argc, char *argv[]) {
 
 	if (getuid() && !is_yes("no-root")) { print("run as root"); return 1; }
 
+	int ret = 0;
+
 	if (action == "emerge") {
-		emerge(pkgs);
+		ret = emerge(pkgs);
 	} else if (action == "build") {
-		build(pkgs);
+		ret = build(pkgs);
 	} else if (action == "install") {
 		if (is_yes("no-package")) {
 			return 1;
 		}
 
 		for (auto pkg: pkgs) {
-			if (!get_pkg(pkg)->install()) break;
+			if (!get_pkg(pkg)->install()) {
+				ret = 1;
+				break;
+			}
 		}
 	} else if (action == "remove") {
 		for (auto pkg: pkgs) {
-			if (!get_pkg(pkg)->remove()) break;
+			if (!get_pkg(pkg)->remove()) {
+				ret = 1;
+				break;
+			}
 		}
 	} else {
 		print("invalid action");
@@ -144,5 +162,5 @@ int main(int argc, char *argv[]) {
 
 	curl_global_cleanup();
 
-	return 0;
+	return ret;
 }
