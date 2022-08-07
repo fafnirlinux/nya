@@ -102,7 +102,7 @@ bool Package::get_sources(bool silent) {
             filename = basename((char*)src.c_str());
         }
 
-        if (is_archive(src)) {
+        if (is_archive(src) || strpos(src, "git")) {
             archives.insert(make_pair(basename((char*)src.c_str()), strip_extension(filename)));
 		}
 
