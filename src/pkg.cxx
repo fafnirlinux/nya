@@ -328,12 +328,12 @@ bool Package::create_script() {
   	line("#!/bin/sh");
     line("source common.sh");
 
-  	if (sources.size() == 1)
-  		line("cd " + strip_extension(sources.begin()->second));
+  	if (archives.size() == 1)
+  		line("cd " + strip_extension(archives.begin()->second));
   	else if (!val("workdir").empty())
   		line("cd " + val("workdir"));
 
-    if (!_is_yes("no-patch") && (sources.size() == 1 || _is_yes("force-patch"))) {
+    if (!_is_yes("no-patch") && (archives.size() == 1 || _is_yes("force-patch"))) {
         vector<string> list = get_contents(get_files_path() + "/patches");
 
 	    for (auto patch: list) {
