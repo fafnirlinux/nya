@@ -477,16 +477,18 @@ bool Package::build(bool silent) {
 
 	msg("building");
 
+	int ret = 0;
+
 	changedir(get_build_path());
     if (silent && !is_no("silent"))
-        system("bash build.sh &>/dev/null");
+        ret = system("bash build.sh &>/dev/null");
     else
-        system("bash build.sh");
+    	ret = system("bash build.sh");
     maindir();
 
 	if (do_package && !package()) return false;
 
-	return true;
+	return ret == 0;
 }
 
 bool Package::install() {

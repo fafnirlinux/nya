@@ -212,7 +212,7 @@ vector<string> read_section(vector<string> data, string section, bool checks) {
             if (!checks) output.push_back("");
             continue;
         }
-        if (checks && in_section && line.at(0) == '#') continue;
+        if (checks && in_section && line.at(0) == '#' && line.at(1) != '!') continue;
 		if (in_section && line.at(0) == '[' && line.at(line.size()-1) == ']') break;
 		if (line.compare("["+section+"]") == 0) {
 			in_section = true;
@@ -236,7 +236,7 @@ vector<string> read_file(string filename, bool checks) {
             if (!checks) result.push_back("");
             continue;
         }
-        if (checks && line.at(0) == '#') continue;
+        if (checks && line.at(0) == '#' && line.at(1) != '!') continue;
 		result.push_back(line);
 	}
 
@@ -568,7 +568,7 @@ map<string, string> read_variables(vector<string> data) {
 
 	for (auto line: data) {
 		if (line.empty()) continue;
-		if (line.at(0) == '#') continue;
+		if (line.at(0) == '#' && line.at(1) != '!') continue;
 		if (line.at(0) == '[' && line.at(line.size()-1) == ']') break;
 		if (strpos(line, "=")) {
 			string val = line.substr(line.find("=") + 1);
